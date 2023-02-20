@@ -1,9 +1,12 @@
 package application;
 
+import javafx.scene.paint.Color;
+
 public class SnakeBody {
 	// Coordinates on the grid
 	private int x;
 	private int y;
+	private Color color = Color.WHITE;
 	
 	public SnakeBody()
 	{
@@ -35,4 +38,14 @@ public class SnakeBody {
 	{
 		this.y = y;
 	}
+
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	
+	
 }

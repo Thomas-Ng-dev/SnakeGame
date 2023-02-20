@@ -1,9 +1,13 @@
 package application;
 
+import application.SnakeDemo.Corner;
+import javafx.scene.paint.Color;
+
 public class Fruit {
 	// Coordinates on the grid
 	private int x;
 	private int y;
+	private Color color = Color.RED;
 	
 	public Fruit()
 	{
@@ -35,6 +39,12 @@ public class Fruit {
 	{
 		this.y = y;
 	}
-	
 
+	public Color getColor() {
+		return color;
+	}
+
+	public void setColor(Color color) {
+		this.color = color;
+	}
 }
