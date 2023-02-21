@@ -54,7 +54,7 @@ public class Main extends Application{
 				
 				public void handle(long now) 
 				{
-					if (now - lastFrame > 100000000) 
+					if (now - lastFrame > 100000000)
 					{
 						lastFrame = now;
 						nextFrame(graphicsContent, fruit);
@@ -62,6 +62,7 @@ public class Main extends Application{
 				}
 			}.start();
 			
+			// Controls
 			scene.setOnKeyPressed(new EventHandler<KeyEvent>()
 			{
 				@Override
@@ -86,7 +87,6 @@ public class Main extends Application{
 				}
 			});
 			
-			
 			// Set a random starting position for the snake
 			int startXPos = random.nextInt(width);
 			int startYPos = random.nextInt(height);
@@ -109,112 +109,19 @@ public class Main extends Application{
 		if (gameOver == true) 
 		{
 			nextFrame.setFill(Color.RED);
-			nextFrame.setFont(new Font("", 75));
+			nextFrame.setFont(new Font("comic sans ms", 50));
 			nextFrame.fillText("GAME OVER \nSnake Length: " + snake.size() +
 					"\nFruits Eaten: " + (snake.size() - 3), 100, 100);
 			return;
 		}
 		
-		// moving the position of the body starting from the tail
-		for (int i = snake.size() - 1; i >= 1; i--) 
-		{
-			snake.get(i).setX(snake.get(i - 1).getX());
-			snake.get(i).setY(snake.get(i - 1).getY());
-		}
-		
-		// traverse to opposite side of map
-		if(currentDirection.equals("UP"))
-		{
-			snake.get(0).setY(snake.get(0).getY() - 1);
-			if (snake.get(0).getY() < 0) 
-			{
-				snake.get(0).setY(height - 1);
-			}
-		}
-		if(currentDirection.equals("DOWN"))
-		{
-			snake.get(0).setY(snake.get(0).getY() + 1);
-			if (snake.get(0).getY() > height - 1) 
-			{
-				snake.get(0).setY(0);
-			}
-		}
-		if(currentDirection.equals("LEFT"))
-		{
-			snake.get(0).setX(snake.get(0).getX() - 1);
-			if (snake.get(0).getX() < 0) 
-			{
-				snake.get(0).setX(width - 1);
-			}
-		}
-		if(currentDirection.equals("RIGHT"))
-		{
-			snake.get(0).setX(snake.get(0).getX() + 1);
-			if (snake.get(0).getX() > width - 1) 
-			{
-				snake.get(0).setX(0);
-			}
-		}
-		
-		// Grow when fruit and snake touch
-		if (fruit.getX() == snake.get(0).getX() && fruit.getY() == snake.get(0).getY()) 
-		{
-			snake.add(new SnakeBody(-1, -1));
-			produceFruit(fruit, snake);
-		}
-		
-		// Check if any body part is in contact with the head
-		for (int i = 1; i < snake.size(); i++) 
-		{
-			if (snake.get(0).getX() == snake.get(i).getX() && 
-					snake.get(0).getY() == snake.get(i).getY()) 
-			{
-				gameOver = true;
-			}
-		}
-		// Reset background color so snake color does not fill up screen
-		nextFrame.setFill(Color.BLACK);
-		nextFrame.fillRect(0, 0, width * hexSize, height * hexSize);
-		
-		// Set the color of the fruit's hex for visibility
-		nextFrame.setFill(fruit.getColor());
-		nextFrame.fillRect(fruit.getX() * hexSize, fruit.getY() * hexSize, hexSize, hexSize);
-		
-		// Update snake body position with color
-		for(SnakeBody body: snake)
-		{
-			nextFrame.setFill(body.getColor());
-			nextFrame.fillRect(body.getX() * hexSize, body.getY() * hexSize, hexSize, hexSize);
-		}
-		
+		Controller.updateBodyPosition(snake);
+		Controller.updateHeadPositionAndAllowBorderTraversal(currentDirection, snake, width, height);
+		Controller.newFruitAfterConsumptionAndSnakeGrowth(fruit, snake, width, height);
+		gameOver = Controller.isSnakeTouchingItself(snake);
+		Controller.updateHexColors(nextFrame, fruit, snake, width, height, hexSize);
 	}
-	
-	public static void produceFruit(Fruit fruit, ArrayList<SnakeBody> snake) 
-	{
-		Boolean intersects = true;
-		// place new food over hex with no snake
-		while (intersects) 
-		{
-			// If no matching coordinates, this will break while loop
-			intersects = false;
-			fruit.setX(random.nextInt(width));
-			fruit.setY(random.nextInt(height));
-			// Crash Test lol
-//			fruit.setX(12);
-//			fruit.setY(12);
-			
-			// Check if any body part is on the same hex as new food
-			for (SnakeBody body : snake) 
-			{
-				if (body.getX() == fruit.getX() && body.getY() == fruit.getY()) 
-				{
-					// If they intersect, restart loop
-					intersects = true;
-					break;
-				}
-			}
-		}
-	}
+
 	
 	public static void main(String[] args) {
 		launch(args);
