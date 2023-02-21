@@ -47,7 +47,6 @@ public class Main extends Application{
 			root.getChildren().add(canvas);
 			
 			Scene scene = new Scene(root, width * hexSize, height * hexSize);
-			scene.getStylesheets().add(getClass().getResource("application.css").toExternalForm());
 			
 			new AnimationTimer() 
 			{
@@ -111,7 +110,8 @@ public class Main extends Application{
 		{
 			nextFrame.setFill(Color.RED);
 			nextFrame.setFont(new Font("", 75));
-			nextFrame.fillText("GAME OVER", 100, 100);
+			nextFrame.fillText("GAME OVER \nSnake Length: " + snake.size() +
+					"\nFruits Eaten: " + (snake.size() - 3), 100, 100);
 			return;
 		}
 		
@@ -122,6 +122,7 @@ public class Main extends Application{
 			snake.get(i).setY(snake.get(i - 1).getY());
 		}
 		
+		// traverse to opposite side of map
 		if(currentDirection.equals("UP"))
 		{
 			snake.get(0).setY(snake.get(0).getY() - 1);
@@ -155,12 +156,14 @@ public class Main extends Application{
 			}
 		}
 		
+		// Grow when fruit and snake touch
 		if (fruit.getX() == snake.get(0).getX() && fruit.getY() == snake.get(0).getY()) 
 		{
 			snake.add(new SnakeBody(-1, -1));
 			produceFruit(fruit, snake);
 		}
 		
+		// Check if any body part is in contact with the head
 		for (int i = 1; i < snake.size(); i++) 
 		{
 			if (snake.get(0).getX() == snake.get(i).getX() && 
